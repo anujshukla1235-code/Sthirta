@@ -1,32 +1,43 @@
-# 01 - Vision & Charter: Churn Prediction with Explainability & Retention Strategy
-
-## One-liner
-Predict which customers will churn, explain why (SHAP), and recommend a per-segment retention action.
+# 01 - Vision & Charter: Project Sthirta (स्थिरता) — Churn Prediction with Explainability & Retention Strategy
 
 ## Problem Statement
-Most churn projects stop at 'predict who will churn'. Businesses actually need to know WHY and WHAT TO DO about it.
-
-## Target Users
-Customer success / retention teams, SaaS product managers
-
-## What Makes This Unique
-Adds a 'why + what to do' layer: SHAP-based per-customer explanation, automatic customer segmentation, and a mapped retention action per segment (e.g. discount, support outreach) with estimated cost-benefit.
-
-## Success Metrics (KPIs)
-- Model recall on churners > 75%
-- Every flagged churner has a SHAP explanation
-- Retention strategy mapped for every segment
+Customer churn in the Telecom/SaaS industry costs organizations millions annually in lost recurring revenue. According to industry data, acquiring a new customer can cost 5-25 times more than retaining an existing one. While many machine learning initiatives successfully predict *who* will churn, they often fail to explain *why* or prescribe *what to do* about it. Without actionable, segment-specific retention strategies mapped to clear cost-benefit thresholds, customer success teams are left guessing, often applying expensive discounts to customers who don't need them or missing the chance to save those who do.
 
 ## Scope
-**In scope:** Core pipeline described in the Product Backlog, one deployed demo, documented results.
-**Out of scope (v1):** Multi-user auth, payment integration, mobile app, large-scale production traffic handling.
+**Inclusions:**
+- End-to-end data pipeline with automated PII masking.
+- XGBoost churn classification model trained on Telecom/SaaS data.
+- SHAP TreeExplainer integration for per-customer explainability, with offline pre-computation and caching (Parquet/SQLite).
+- Cost-benefit threshold optimization (Cost Matrix for False Positives vs. False Negatives).
+- Interactive Retention Dashboard on Streamlit Community Cloud.
+- Batch inference export (CSV) for CRM synchronization.
+- Feedback loop tracking to measure the efficacy of applied retention actions.
+
+**Exclusions:**
+- Real-time streaming data ingestion (v1 focuses on batch processing).
+- Direct bi-directional API integration with third-party CRMs (handled via CSV export).
+- Deep learning/Neural Network approaches (XGBoost is prioritized for explainability).
+
+## Target Personas
+- **Customer Success Manager:** Needs to know which accounts to prioritize and the precise reason for their churn risk to tailor conversations.
+- **Retention Marketing Lead:** Requires segmented groups to design targeted promotional campaigns based on the top churn drivers.
+- **VP Revenue:** Needs visibility into the overall financial impact of predicted churn and the ROI of retention strategies.
+- **ML Engineer:** Responsible for model training, SHAP value caching, and maintaining pipeline health.
 
 ## Stakeholders
-- Owner/Developer: you
-- Reviewers: placement mentors, recruiters (as end evaluators)
+- **Chief Revenue Officer (CRO)**
+- **Customer Success Team**
+- **Marketing Analytics Lead**
+- **Data Engineering**
 
-## Timeline
-5 sprints (Sprint 0 = setup, Sprints 1-4 = 1 week each recommended) — approx. 4-5 weeks part-time.
+## Success Metrics (Quantitative KPIs)
+- **Recall on churners:** > 80%
+- **Precision:** > 65%
+- **F1 Score:** > 72%
+- **Explainability Latency:** SHAP computation and rendering < 2s per customer (via cached Parquet/SQLite layer).
 
-## Methodology
-Agile (Scrum-flavored, solo adaptation): fixed-length sprints, a living backlog, and a short retrospective after each sprint (see doc 07).
+## Risk Assessment
+- **Data Leakage Risk:** High. Target variables could inadvertently bleed into training data. Mitigation: Strict temporal splits and pipeline isolation.
+- **Compute Bottleneck Risk:** SHAP TreeExplainer is computationally expensive at scale. Mitigation: Pre-computing SHAP values offline and serving from a fast cache layer.
+- **Concept Drift Risk:** Customer behavior changes over time, rendering the model stale. Mitigation: Implementing PSI (Population Stability Index) and Evidently AI for automated drift detection.
+- **Privacy Risk:** Exposure of customer PII in the dashboard. Mitigation: Enforced PII masking at the ingestion layer.
